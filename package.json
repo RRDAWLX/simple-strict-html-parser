@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest src"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",

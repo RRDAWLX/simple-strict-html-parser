@@ -1,4 +1,4 @@
-type Token = TextToken | SelfClosingTagToken | OpeningTagToken | ClosingTagToken
+export type Token = TextToken | SelfClosingTagToken | OpeningTagToken | ClosingTagToken
 type TextToken = {
   type: 1;
   text: string;
