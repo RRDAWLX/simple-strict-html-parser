@@ -1,19 +1,26 @@
+export const TokenTypes = {
+  text: 1,
+  openingTag: 2,
+  closingTag: 3,
+  selfClosingTag: 4,
+} as const
+
 export type Token = TextToken | SelfClosingTagToken | OpeningTagToken | ClosingTagToken
 type TextToken = {
-  type: 1;
+  type: (typeof TokenTypes)['text'];
   text: string;
 }
 type OpeningTagToken = {
-  type: 2;
+  type: (typeof TokenTypes)['openingTag'];
   tagName: string;
   attributes: Record<string, string>;
 }
 type ClosingTagToken = {
-  type: 3;
+  type: (typeof TokenTypes)['closingTag'];
   tagName: string;
 }
 type SelfClosingTagToken = {
-  type: 4;
+  type: (typeof TokenTypes)['selfClosingTag'];
   tagName: string;
   attributes: Record<string, string>;
 }
@@ -23,13 +30,6 @@ type Data = {
   len: number;
   i: number;
   tokens: Token[];
-}
-
-export const TokenTypes = {
-  text: 1,
-  openingTag: 2,
-  closingTag: 3,
-  selfClosingTag: 4,
 }
 
 export function tokenize(html: string): Token[] {
@@ -109,7 +109,7 @@ function parseStartTag(data: Data): void {
       type: isSelfClosing ? TokenTypes.selfClosingTag : TokenTypes.openingTag,
       tagName,
       attributes,
-    } as SelfClosingTagToken | OpeningTagToken)
+    })
   } else {
     throw new Error('开始标签格式有误')
   }
@@ -145,7 +145,7 @@ function parseClosingTag(data: Data): void {
   tokens.push({
     type: TokenTypes.closingTag,
     tagName,
-  } as ClosingTagToken)
+  })
 }
 
 /**
@@ -292,7 +292,7 @@ function parseText(data: Data): void {
   tokens.push({
     type: TokenTypes.text,
     text: html.slice(start, i),
-  } as TextToken)
+  })
   data.i = i
 }
 

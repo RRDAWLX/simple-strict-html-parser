@@ -1,21 +1,21 @@
 import { Token, tokenize, TokenTypes } from './tokenizer'
 
+// dom node type https://developer.mozilla.org/zh-CN/docs/Web/API/Node/nodeType
+export const NodeTypes = {
+  element: 1,
+  text: 3,
+} as const
+
 export type Node = ElementNode | TextNode
 type ElementNode = {
-  nodeType: 1;
+  nodeType: (typeof NodeTypes)['element'];
   tagName: string;
   attributes: Record<string, string>;
   children: Node[];
 }
 type TextNode = {
-  nodeType: 3;
+  nodeType: (typeof NodeTypes)['text'];
   text: string;
-}
-
-// dom node type https://developer.mozilla.org/zh-CN/docs/Web/API/Node/nodeType
-export const NodeTypes = {
-  element: 1,
-  text: 3,
 }
 
 export function parse (html: string): Node[] {
@@ -24,7 +24,7 @@ export function parse (html: string): Node[] {
 
 export function generateAST (tokens: Token[]): Node[] {
   const root: ElementNode = {
-    nodeType: 1,
+    nodeType: NodeTypes.element,
     tagName: '',
     attributes: {},
     children: [],
@@ -37,7 +37,7 @@ export function generateAST (tokens: Token[]): Node[] {
       cur.children.push({
         nodeType: NodeTypes.text,
         text: token.text,
-      } as TextNode)
+      })
     } else if (token.type === TokenTypes.closingTag) {
       if (cur.tagName !== token.tagName) {
         throw new Error(`</${token.tagName}> 无匹配的开始标签`)
@@ -50,7 +50,7 @@ export function generateAST (tokens: Token[]): Node[] {
         tagName: token.tagName,
         attributes: token.attributes,
         children: [],
-      } as ElementNode
+      }
       cur.children.push(node)
 
       if (token.type === TokenTypes.openingTag) {
